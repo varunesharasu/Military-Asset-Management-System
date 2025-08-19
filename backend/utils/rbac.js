@@ -1,0 +1,2 @@
+// RBAC Utility
+module.exports = {};

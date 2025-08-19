@@ -1,0 +1,2 @@
+// Database Config
+module.exports = {};

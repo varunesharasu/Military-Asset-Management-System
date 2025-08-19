@@ -1,0 +1,2 @@
+// Asset Controller
+module.exports = {};

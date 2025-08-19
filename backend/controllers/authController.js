@@ -1,0 +1,2 @@
+// Auth Controller
+module.exports = {};

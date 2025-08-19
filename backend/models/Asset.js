@@ -1,0 +1,2 @@
+// Asset Model
+module.exports = {};

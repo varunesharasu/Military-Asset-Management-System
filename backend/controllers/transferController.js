@@ -1,0 +1,2 @@
+// Transfer Controller
+module.exports = {};

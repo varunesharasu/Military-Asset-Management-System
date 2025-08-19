@@ -1,0 +1,2 @@
+// Assignment Controller
+module.exports = {};

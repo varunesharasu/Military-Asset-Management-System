@@ -1,0 +1,2 @@
+// Purchase Controller
+module.exports = {};

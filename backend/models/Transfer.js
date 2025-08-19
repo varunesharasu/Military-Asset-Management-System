@@ -1,0 +1,2 @@
+// Transfer Model
+module.exports = {};

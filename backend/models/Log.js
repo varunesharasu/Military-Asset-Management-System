@@ -1,0 +1,2 @@
+// Log Model
+module.exports = {};

@@ -1,0 +1,2 @@
+// Assignment Model
+module.exports = {};
