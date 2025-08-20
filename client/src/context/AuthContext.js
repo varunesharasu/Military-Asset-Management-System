@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   // Set up axios defaults
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api"
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "https://military-asset-management-system-36vf.onrender.com/api"
   axios.defaults.baseURL = API_BASE_URL
 
   useEffect(() => {
