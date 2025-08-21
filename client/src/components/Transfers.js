@@ -14,6 +14,7 @@ const Transfers = () => {
   const [editingTransfer, setEditingTransfer] = useState(null)
   const [stats, setStats] = useState(null)
   const [bases, setBases] = useState([])
+  const [refreshing, setRefreshing] = useState(false)
 
   // Filters and pagination
   const [filters, setFilters] = useState({
@@ -214,47 +215,110 @@ const Transfers = () => {
     return "neutral"
   }
 
+  // Enhanced refresh function
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await Promise.all([fetchTransfers(), fetchStats()])
+    setRefreshing(false)
+  }
+
   return (
     <div className="transfers-container">
+      {/* Enhanced Page Header */}
       <div className="page-header">
         <div className="header-content">
-          <div>
+          <div className="header-text">
             <h2>Transfer Management</h2>
-            <p>Manage asset transfers between bases</p>
+            <p>Manage asset transfers between bases in real-time</p>
           </div>
-          <button className="btn btn-primary" onClick={() => setShowForm(true)}>
-            New Transfer
-          </button>
+          <div className="header-actions">
+            <button 
+              className={`btn btn-refresh ${refreshing ? 'refreshing' : ''}`} 
+              onClick={handleRefresh}
+              disabled={refreshing}
+            >
+              <span className="btn-icon">🔄</span>
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
+            <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+              <span className="btn-icon">➕</span>
+              New Transfer
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Enhanced Statistics Cards */}
       {stats && (
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-value">{stats.totalTransfers}</div>
-            <div className="stat-label">Total Transfers</div>
+        <div className="stats-section">
+          <div className="stats-header">
+            <h3>Transfer Overview</h3>
+            <div className="live-indicator">
+              <span className="status-dot"></span>
+              <span>Live Data</span>
+            </div>
           </div>
-          <div className="stat-card">
-            <div className="stat-value">{stats.pendingCount}</div>
-            <div className="stat-label">Pending</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-value">{stats.inTransitCount}</div>
-            <div className="stat-label">In Transit</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-value">{stats.deliveredCount}</div>
-            <div className="stat-label">Delivered</div>
+          <div className="stats-grid">
+            <div className="stat-card total">
+              <div className="stat-icon">📋</div>
+              <div className="stat-content">
+                <div className="stat-value">{stats.totalTransfers}</div>
+                <div className="stat-label">Total Transfers</div>
+                <div className="stat-trend">All time records</div>
+              </div>
+            </div>
+            <div className="stat-card pending">
+              <div className="stat-icon">⏳</div>
+              <div className="stat-content">
+                <div className="stat-value">{stats.pendingCount}</div>
+                <div className="stat-label">Pending Approval</div>
+                <div className="stat-trend">Awaiting processing</div>
+              </div>
+            </div>
+            <div className="stat-card transit">
+              <div className="stat-icon">🚚</div>
+              <div className="stat-content">
+                <div className="stat-value">{stats.inTransitCount}</div>
+                <div className="stat-label">In Transit</div>
+                <div className="stat-trend">Currently moving</div>
+              </div>
+            </div>
+            <div className="stat-card delivered">
+              <div className="stat-icon">✅</div>
+              <div className="stat-content">
+                <div className="stat-value">{stats.deliveredCount}</div>
+                <div className="stat-label">Delivered</div>
+                <div className="stat-trend">Successfully completed</div>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Filters */}
+      {/* Enhanced Filters */}
       <div className="filters-section">
+        <div className="filters-header">
+          <h3>Filter & Search</h3>
+          <button 
+            className="btn btn-outline"
+            onClick={() => setFilters({
+              base: "",
+              assetType: "all",
+              status: "all",
+              direction: "all",
+              startDate: "",
+              endDate: "",
+            })}
+          >
+            Clear All
+          </button>
+        </div>
         <div className="filters-grid">
           <div className="filter-group">
-            <label className="filter-label">Base</label>
+            <label className="filter-label">
+              <span className="label-text">Base</span>
+              <span className="label-icon">🏢</span>
+            </label>
             <select
               value={filters.base}
               onChange={(e) => handleFilterChange("base", e.target.value)}
@@ -270,7 +334,10 @@ const Transfers = () => {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Asset Type</label>
+            <label className="filter-label">
+              <span className="label-text">Asset Type</span>
+              <span className="label-icon">🏷️</span>
+            </label>
             <select
               value={filters.assetType}
               onChange={(e) => handleFilterChange("assetType", e.target.value)}
@@ -286,7 +353,10 @@ const Transfers = () => {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Status</label>
+            <label className="filter-label">
+              <span className="label-text">Status</span>
+              <span className="label-icon">📊</span>
+            </label>
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange("status", e.target.value)}
@@ -302,7 +372,10 @@ const Transfers = () => {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Direction</label>
+            <label className="filter-label">
+              <span className="label-text">Direction</span>
+              <span className="label-icon">↔️</span>
+            </label>
             <select
               value={filters.direction}
               onChange={(e) => handleFilterChange("direction", e.target.value)}
@@ -317,7 +390,10 @@ const Transfers = () => {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Start Date</label>
+            <label className="filter-label">
+              <span className="label-text">Start Date</span>
+              <span className="label-icon">📅</span>
+            </label>
             <input
               type="date"
               value={filters.startDate}
@@ -327,7 +403,10 @@ const Transfers = () => {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">End Date</label>
+            <label className="filter-label">
+              <span className="label-text">End Date</span>
+              <span className="label-icon">📅</span>
+            </label>
             <input
               type="date"
               value={filters.endDate}
@@ -338,120 +417,215 @@ const Transfers = () => {
         </div>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && (
+        <div className="alert alert-error">
+          <span className="alert-icon">⚠️</span>
+          <span>{error}</span>
+          <button className="alert-close" onClick={() => setError("")}>×</button>
+        </div>
+      )}
 
-      {/* Transfers Table */}
+      {/* Enhanced Transfers Table */}
       <div className="transfers-section">
+        <div className="section-header">
+          <h3>Transfer Records</h3>
+          <div className="table-info">
+            <span className="record-count">{pagination.total} records</span>
+            <div className="view-options">
+              <button className="view-btn active">📋</button>
+              <button className="view-btn">📊</button>
+            </div>
+          </div>
+        </div>
+
         {loading ? (
-          <div className="loading">
-            <div className="loading-spinner"></div>
-            <p>Loading transfers...</p>
+          <div className="loading-state">
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+              <div className="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <p>Loading transfer data...</p>
           </div>
         ) : (
           <>
             <div className="table-container">
-              <table className="transfers-table">
-                <thead>
-                  <tr>
-                    <th>Transfer ID</th>
-                    <th>Asset</th>
-                    <th>Quantity</th>
-                    <th>Route</th>
-                    <th>Transfer Date</th>
-                    <th>Transport</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {transfers.map((transfer) => (
-                    <tr key={transfer._id} className={`transfer-row ${getTransferDirection(transfer)}`}>
-                      <td className="transfer-id">{transfer.transferId}</td>
-                      <td>
-                        <div className="asset-info">
-                          <div className="asset-name">{transfer.assetName}</div>
-                          <div className="asset-type">{transfer.assetType}</div>
-                        </div>
-                      </td>
-                      <td>
-                        {transfer.quantity} {transfer.unit}
-                      </td>
-                      <td>
-                        <div className="route-info">
-                          <div className="route-from">From: {transfer.fromBase}</div>
-                          <div className="route-to">To: {transfer.toBase}</div>
-                          <div className="route-direction">
-                            {getTransferDirection(transfer) === "incoming" && "↓ Incoming"}
-                            {getTransferDirection(transfer) === "outgoing" && "↑ Outgoing"}
-                            {getTransferDirection(transfer) === "neutral" && "↔ External"}
-                          </div>
-                        </div>
-                      </td>
-                      <td>{formatDate(transfer.transferDate)}</td>
-                      <td>
-                        <div className="transport-info">
-                          <div className="transport-method">{transfer.transportMethod}</div>
-                          {transfer.trackingNumber && <div className="tracking-number">#{transfer.trackingNumber}</div>}
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`status-badge status-${transfer.status}`}>
-                          {transfer.status.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="action-buttons">
-                          <button className="btn-small btn-secondary" onClick={() => handleEdit(transfer)}>
-                            Edit
-                          </button>
-                          {transfer.status === "pending" && (
-                            <button
-                              className="btn-small btn-primary"
-                              onClick={() => handleStatusUpdate(transfer._id, "in_transit")}
-                            >
-                              Approve
-                            </button>
-                          )}
-                          {transfer.status === "in_transit" && (
-                            <button
-                              className="btn-small btn-primary"
-                              onClick={() => handleStatusUpdate(transfer._id, "delivered")}
-                            >
-                              Mark Delivered
-                            </button>
-                          )}
-                          {user?.role === "admin" && transfer.status === "pending" && (
-                            <button className="btn-small btn-danger" onClick={() => handleDelete(transfer._id)}>
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                      </td>
+              <div className="table-wrapper">
+                <table className="transfers-table">
+                  <thead>
+                    <tr>
+                      <th>Transfer ID</th>
+                      <th>Asset Details</th>
+                      <th>Quantity</th>
+                      <th>Route</th>
+                      <th>Transfer Date</th>
+                      <th>Transport</th>
+                      <th>Status</th>
+                      <th>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {transfers.map((transfer, index) => (
+                      <tr 
+                        key={transfer._id} 
+                        className={`transfer-row ${getTransferDirection(transfer)}`}
+                        style={{animationDelay: `${index * 0.05}s`}}
+                      >
+                        <td>
+                          <div className="transfer-id">
+                            <span className="id-label">TXN</span>
+                            <span className="id-value">{transfer.transferId}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="asset-info">
+                            <div className="asset-name">{transfer.assetName}</div>
+                            <div className="asset-type">
+                              <span className="type-badge">{transfer.assetType}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="quantity-info">
+                            <span className="quantity">{transfer.quantity}</span>
+                            <span className="unit">{transfer.unit}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="route-info">
+                            <div className="route-from">
+                              <span className="route-label">From:</span>
+                              <span className="base-name">{transfer.fromBase}</span>
+                            </div>
+                            <div className="route-to">
+                              <span className="route-label">To:</span>
+                              <span className="base-name">{transfer.toBase}</span>
+                            </div>
+                            <div className="route-direction">
+                              {getTransferDirection(transfer) === "incoming" && (
+                                <span className="direction-badge incoming">
+                                  <span className="direction-icon">↓</span>
+                                  Incoming
+                                </span>
+                              )}
+                              {getTransferDirection(transfer) === "outgoing" && (
+                                <span className="direction-badge outgoing">
+                                  <span className="direction-icon">↑</span>
+                                  Outgoing
+                                </span>
+                              )}
+                              {getTransferDirection(transfer) === "neutral" && (
+                                <span className="direction-badge neutral">
+                                  <span className="direction-icon">↔</span>
+                                  External
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="date-info">
+                            <span className="date-value">{formatDate(transfer.transferDate)}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="transport-info">
+                            <div className="transport-method">
+                              <span className="method-icon">
+                                {transfer.transportMethod === 'ground' && '🚛'}
+                                {transfer.transportMethod === 'air' && '✈️'}
+                                {transfer.transportMethod === 'sea' && '🚢'}
+                                {transfer.transportMethod === 'rail' && '🚂'}
+                              </span>
+                              <span className="method-name">{transfer.transportMethod}</span>
+                            </div>
+                            {transfer.trackingNumber && (
+                              <div className="tracking-number">#{transfer.trackingNumber}</div>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <span className={`status-badge status-${transfer.status.replace('_', '-')}`}>
+                            <span className="status-icon"></span>
+                            {transfer.status.replace("_", " ")}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            <button 
+                              className="action-btn edit" 
+                              onClick={() => handleEdit(transfer)}
+                              title="Edit Transfer"
+                            >
+                              ✏️
+                            </button>
+                            {transfer.status === "pending" && (
+                              <button
+                                className="action-btn approve"
+                                onClick={() => handleStatusUpdate(transfer._id, "in_transit")}
+                                title="Approve Transfer"
+                              >
+                                ✅
+                              </button>
+                            )}
+                            {transfer.status === "in_transit" && (
+                              <button
+                                className="action-btn deliver"
+                                onClick={() => handleStatusUpdate(transfer._id, "delivered")}
+                                title="Mark as Delivered"
+                              >
+                                📦
+                              </button>
+                            )}
+                            {user?.role === "admin" && transfer.status === "pending" && (
+                              <button 
+                                className="action-btn delete" 
+                                onClick={() => handleDelete(transfer._id)}
+                                title="Delete Transfer"
+                              >
+                                🗑️
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            {/* Pagination */}
+            {/* Enhanced Pagination */}
             {pagination.pages > 1 && (
               <div className="pagination">
                 <button
-                  className="btn btn-secondary"
+                  className="pagination-btn"
                   disabled={pagination.current === 1}
                   onClick={() => setPagination((prev) => ({ ...prev, current: prev.current - 1 }))}
                 >
+                  <span>‹</span>
                   Previous
                 </button>
-                <span className="pagination-info">
-                  Page {pagination.current} of {pagination.pages} ({pagination.total} total)
-                </span>
+                
+                <div className="pagination-info">
+                  <span className="page-numbers">
+                    Page <strong>{pagination.current}</strong> of <strong>{pagination.pages}</strong>
+                  </span>
+                  <span className="total-records">
+                    ({pagination.total} total records)
+                  </span>
+                </div>
+                
                 <button
-                  className="btn btn-secondary"
+                  className="pagination-btn"
                   disabled={pagination.current === pagination.pages}
                   onClick={() => setPagination((prev) => ({ ...prev, current: prev.current + 1 }))}
                 >
                   Next
+                  <span>›</span>
                 </button>
               </div>
             )}
@@ -459,12 +633,15 @@ const Transfers = () => {
         )}
       </div>
 
-      {/* Transfer Form Modal */}
+      {/* Enhanced Transfer Form Modal */}
       {showForm && (
         <div className="modal-overlay" onClick={() => setShowForm(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{editingTransfer ? "Edit Transfer" : "New Transfer"}</h3>
+              <div className="modal-title">
+                <span className="modal-icon">{editingTransfer ? '✏️' : '➕'}</span>
+                <h3>{editingTransfer ? "Edit Transfer" : "New Transfer"}</h3>
+              </div>
               <button
                 className="modal-close"
                 onClick={() => {
@@ -476,166 +653,213 @@ const Transfers = () => {
                 ×
               </button>
             </div>
+            
             <div className="modal-body">
               <form onSubmit={handleSubmit} className="transfer-form">
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Asset Type</label>
-                    <select
-                      value={formData.assetType}
-                      onChange={(e) => handleFormChange("assetType", e.target.value)}
-                      className="form-control"
-                      required
-                    >
-                      {assetTypes.map((type) => (
-                        <option key={type} value={type}>
-                          {type.charAt(0).toUpperCase() + type.slice(1)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div className="form-section">
+                  <h4 className="section-title">Asset Information</h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">Asset Type</span>
+                        <span className="required">*</span>
+                      </label>
+                      <select
+                        value={formData.assetType}
+                        onChange={(e) => handleFormChange("assetType", e.target.value)}
+                        className="form-control"
+                        required
+                      >
+                        {assetTypes.map((type) => (
+                          <option key={type} value={type}>
+                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Asset Name</label>
-                    <input
-                      type="text"
-                      value={formData.assetName}
-                      onChange={(e) => handleFormChange("assetName", e.target.value)}
-                      className="form-control"
-                      required
-                      placeholder="Enter asset name"
-                    />
-                  </div>
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">Asset Name</span>
+                        <span className="required">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.assetName}
+                        onChange={(e) => handleFormChange("assetName", e.target.value)}
+                        className="form-control"
+                        required
+                        placeholder="Enter asset name"
+                      />
+                    </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Quantity</label>
-                    <input
-                      type="number"
-                      value={formData.quantity}
-                      onChange={(e) => handleFormChange("quantity", e.target.value)}
-                      className="form-control"
-                      required
-                      min="1"
-                      placeholder="Enter quantity"
-                    />
-                  </div>
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">Quantity</span>
+                        <span className="required">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.quantity}
+                        onChange={(e) => handleFormChange("quantity", e.target.value)}
+                        className="form-control"
+                        required
+                        min="1"
+                        placeholder="Enter quantity"
+                      />
+                    </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Unit</label>
-                    <input
-                      type="text"
-                      value={formData.unit}
-                      onChange={(e) => handleFormChange("unit", e.target.value)}
-                      className="form-control"
-                      required
-                      placeholder="e.g., pieces, rounds, kg"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">From Base</label>
-                    <select
-                      value={formData.fromBase}
-                      onChange={(e) => handleFormChange("fromBase", e.target.value)}
-                      className="form-control"
-                      required
-                    >
-                      <option value="">Select from base</option>
-                      {bases.map((base) => (
-                        <option key={base} value={base}>
-                          {base}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">To Base</label>
-                    <select
-                      value={formData.toBase}
-                      onChange={(e) => handleFormChange("toBase", e.target.value)}
-                      className="form-control"
-                      required
-                    >
-                      <option value="">Select to base</option>
-                      {bases.map((base) => (
-                        <option key={base} value={base} disabled={base === formData.fromBase}>
-                          {base}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Transfer Date</label>
-                    <input
-                      type="date"
-                      value={formData.transferDate}
-                      onChange={(e) => handleFormChange("transferDate", e.target.value)}
-                      className="form-control"
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Expected Delivery Date</label>
-                    <input
-                      type="date"
-                      value={formData.expectedDeliveryDate}
-                      onChange={(e) => handleFormChange("expectedDeliveryDate", e.target.value)}
-                      className="form-control"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Transport Method</label>
-                    <select
-                      value={formData.transportMethod}
-                      onChange={(e) => handleFormChange("transportMethod", e.target.value)}
-                      className="form-control"
-                      required
-                    >
-                      {transportMethods.map((method) => (
-                        <option key={method} value={method}>
-                          {method.charAt(0).toUpperCase() + method.slice(1)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Tracking Number (Optional)</label>
-                    <input
-                      type="text"
-                      value={formData.trackingNumber}
-                      onChange={(e) => handleFormChange("trackingNumber", e.target.value)}
-                      className="form-control"
-                      placeholder="Enter tracking number"
-                    />
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">Unit</span>
+                        <span className="required">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.unit}
+                        onChange={(e) => handleFormChange("unit", e.target.value)}
+                        className="form-control"
+                        required
+                        placeholder="e.g., pieces, rounds, kg"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Reason for Transfer</label>
-                  <textarea
-                    value={formData.reason}
-                    onChange={(e) => handleFormChange("reason", e.target.value)}
-                    className="form-control"
-                    rows="2"
-                    required
-                    placeholder="Explain the reason for this transfer"
-                  />
+                <div className="form-section">
+                  <h4 className="section-title">Transfer Route</h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">From Base</span>
+                        <span className="required">*</span>
+                      </label>
+                      <select
+                        value={formData.fromBase}
+                        onChange={(e) => handleFormChange("fromBase", e.target.value)}
+                        className="form-control"
+                        required
+                      >
+                        <option value="">Select from base</option>
+                        {bases.map((base) => (
+                          <option key={base} value={base}>
+                            {base}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">To Base</span>
+                        <span className="required">*</span>
+                      </label>
+                      <select
+                        value={formData.toBase}
+                        onChange={(e) => handleFormChange("toBase", e.target.value)}
+                        className="form-control"
+                        required
+                      >
+                        <option value="">Select to base</option>
+                        {bases.map((base) => (
+                          <option key={base} value={base} disabled={base === formData.fromBase}>
+                            {base}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">Transfer Date</span>
+                        <span className="required">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        value={formData.transferDate}
+                        onChange={(e) => handleFormChange("transferDate", e.target.value)}
+                        className="form-control"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">Expected Delivery Date</span>
+                      </label>
+                      <input
+                        type="date"
+                        value={formData.expectedDeliveryDate}
+                        onChange={(e) => handleFormChange("expectedDeliveryDate", e.target.value)}
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Notes (Optional)</label>
-                  <textarea
-                    value={formData.notes}
-                    onChange={(e) => handleFormChange("notes", e.target.value)}
-                    className="form-control"
-                    rows="3"
-                    placeholder="Additional notes or comments"
-                  />
+                <div className="form-section">
+                  <h4 className="section-title">Transport Details</h4>
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">Transport Method</span>
+                        <span className="required">*</span>
+                      </label>
+                      <select
+                        value={formData.transportMethod}
+                        onChange={(e) => handleFormChange("transportMethod", e.target.value)}
+                        className="form-control"
+                        required
+                      >
+                        {transportMethods.map((method) => (
+                          <option key={method} value={method}>
+                            {method.charAt(0).toUpperCase() + method.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">
+                        <span className="label-text">Tracking Number</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.trackingNumber}
+                        onChange={(e) => handleFormChange("trackingNumber", e.target.value)}
+                        className="form-control"
+                        placeholder="Enter tracking number (optional)"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group full-width">
+                    <label className="form-label">
+                      <span className="label-text">Reason for Transfer</span>
+                      <span className="required">*</span>
+                    </label>
+                    <textarea
+                      value={formData.reason}
+                      onChange={(e) => handleFormChange("reason", e.target.value)}
+                      className="form-control"
+                      rows="2"
+                      required
+                      placeholder="Explain the reason for this transfer"
+                    />
+                  </div>
+
+                  <div className="form-group full-width">
+                    <label className="form-label">
+                      <span className="label-text">Notes</span>
+                    </label>
+                    <textarea
+                      value={formData.notes}
+                      onChange={(e) => handleFormChange("notes", e.target.value)}
+                      className="form-control"
+                      rows="3"
+                      placeholder="Additional notes or comments (optional)"
+                    />
+                  </div>
                 </div>
 
                 <div className="form-actions">
@@ -651,7 +875,17 @@ const Transfers = () => {
                     Cancel
                   </button>
                   <button type="submit" className="btn btn-primary" disabled={formLoading}>
-                    {formLoading ? "Saving..." : editingTransfer ? "Update Transfer" : "Create Transfer"}
+                    {formLoading ? (
+                      <>
+                        <span className="btn-spinner"></span>
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <span className="btn-icon">{editingTransfer ? '💾' : '➕'}</span>
+                        {editingTransfer ? "Update Transfer" : "Create Transfer"}
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
