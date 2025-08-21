@@ -455,6 +455,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
 import axios from "axios"
 import "../styles/Dashboard.css"
+import Notifications from './Notifications';
 
 const Dashboard = () => {
   const { user } = useAuth()
@@ -1026,6 +1027,8 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      <Notifications />
     </div>
   )
 }
