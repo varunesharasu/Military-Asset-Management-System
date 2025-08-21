@@ -19,6 +19,7 @@ app.use("/api/purchases", require("./routes/purchases"))
 app.use("/api/transfers", require("./routes/transfers"))
 app.use("/api/assignments", require("./routes/assignments"))
 app.use("/api/dashboard", require("./routes/dashboard"))
+app.use("/api/notifications", require("./routes/notifications"));
 
 // Connect to MongoDB
 mongoose
