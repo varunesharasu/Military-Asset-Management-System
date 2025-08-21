@@ -3,6 +3,7 @@ const { body, validationResult } = require("express-validator")
 const { auth, authorize } = require("../middleware/auth")
 const Purchase = require("../models/Purchase")
 const Balance = require("../models/Balance")
+const Notification = require("../models/Notification")
 
 const router = express.Router()
 
@@ -154,6 +155,13 @@ router.post(
 
       await purchase.save()
 
+      // Create a notification
+      const notification = new Notification({
+        type: "purchase",
+        message: `New purchase created: ${purchase.assetName}`,
+      })
+      await notification.save()
+
       // Populate the response
       await purchase.populate("purchasedBy", "firstName lastName rank")
 
@@ -225,6 +233,14 @@ router.put(
       })
         .populate("purchasedBy", "firstName lastName rank")
         .populate("approvedBy", "firstName lastName rank")
+
+      // Create notification for purchase update
+      if (req.body.status && req.body.status !== purchase.status) {
+        await Notification.create({
+          type: "purchase",
+          message: `Purchase for '${purchase.itemName}' status changed to '${req.body.status}'.`,
+        })
+      }
 
       res.json({
         message: "Purchase updated successfully",
