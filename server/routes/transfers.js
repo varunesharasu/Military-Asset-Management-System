@@ -4,6 +4,7 @@ const { auth, authorize } = require("../middleware/auth")
 const Transfer = require("../models/Transfer")
 const Asset = require("../models/Asset")
 const Balance = require("../models/Balance")
+const Notification = require("../models/Notification")
 
 const router = express.Router()
 
@@ -205,6 +206,13 @@ router.post(
         { path: "initiatedBy", select: "firstName lastName rank" },
       ])
 
+      // Create a notification
+      const notification = new Notification({
+        type: "transfer",
+        message: `New transfer created: ${transfer.assetName}`,
+      })
+      await notification.save()
+
       res.status(201).json({
         message: "Transfer created successfully",
         transfer,
@@ -257,12 +265,25 @@ router.put(
       // Set approval info if status is being approved
       if (updateFields.status === "in_transit" && transfer.status === "pending") {
         updateFields.approvedBy = req.user._id
+        // Create notification for approval
+        await Notification.create({
+          type: "transfer",
+          message: `Transfer for asset '${transfer.assetName}' has been approved.`,
+        })
       }
 
       // Set received info if status is being marked as delivered
       if (updateFields.status === "delivered" && transfer.status !== "delivered") {
         updateFields.receivedBy = req.user._id
         updateFields.actualDeliveryDate = new Date()
+      }
+
+      // Create notification for transfer status update
+      if (updateFields.status && updateFields.status !== transfer.status) {
+        await Notification.create({
+          type: 'transfer',
+          message: `Transfer for asset '${transfer.assetName}' status changed to '${updateFields.status}'.`
+        });
       }
 
       const updatedTransfer = await Transfer.findByIdAndUpdate(req.params.id, updateFields, {
