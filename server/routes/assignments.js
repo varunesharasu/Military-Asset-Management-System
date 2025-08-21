@@ -2,6 +2,7 @@ const express = require("express")
 const { auth, authorize } = require("../middleware/auth")
 const Assignment = require("../models/Assignment")
 const Asset = require("../models/Asset")
+const Notification = require("../models/Notification")
 
 const router = express.Router()
 
@@ -174,6 +175,13 @@ router.post("/", auth, authorize("admin", "base_commander"), async (req, res) =>
 
     await assignment.save()
 
+    // Create a notification
+    const notification = new Notification({
+      type: "assignment",
+      message: `New assignment created: ${assignment.assetName}`,
+    })
+    await notification.save()
+
     // Update asset availability
     asset.availableQuantity -= quantity
     asset.assignedQuantity += quantity
@@ -258,6 +266,15 @@ router.put("/:id/status", auth, authorize("admin", "base_commander"), async (req
     assignment.updatedDate = new Date()
 
     await assignment.save()
+
+    // Create notification for assignment update
+    if (req.body.status && req.body.status !== assignment.status) {
+      await Notification.create({
+        type: "assignment",
+        message: `Assignment for asset '${assignment.assetName}' status changed to '${req.body.status}'.`,
+      })
+    }
+
     res.json(assignment)
   } catch (error) {
     res.status(400).json({ message: error.message })
