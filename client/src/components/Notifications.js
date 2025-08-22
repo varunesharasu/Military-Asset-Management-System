@@ -10,10 +10,8 @@ const Notifications = () => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.patch(`/api/notifications/${id}/read`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+      await fetch(`/api/notifications/${id}/read`, {
+        method: 'PATCH',
       });
       
       setNotifications(prev =>
@@ -28,10 +26,8 @@ const Notifications = () => {
 
   const clearAllNotifications = async () => {
     try {
-      await axios.delete('/api/notifications/clear', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+      await fetch('/api/notifications/clear', {
+        method: 'DELETE',
       });
       setNotifications([]);
       setIsOpen(false);

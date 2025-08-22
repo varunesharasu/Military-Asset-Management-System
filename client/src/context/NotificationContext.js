@@ -8,15 +8,7 @@ export const NotificationProvider = ({ children }) => {
   // Fetch notifications from backend
   const fetchNotifications = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-      
-      const response = await fetch('/api/notifications', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
+      const response = await fetch('/api/notifications');
       if (response.ok) {
         const data = await response.json();
         setNotifications(data);

@@ -31,28 +31,6 @@ const assetSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    totalQuantity: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
-    availableQuantity: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
-    assignedQuantity: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    expendedQuantity: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
     status: {
       type: String,
       enum: ["available", "assigned", "maintenance", "expended"],

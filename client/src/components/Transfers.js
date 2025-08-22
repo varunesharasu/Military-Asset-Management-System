@@ -66,7 +66,7 @@ const Transfers = () => {
 
   const fetchBases = async () => {
     try {
-      const response = await axios.get("/api/transfers/bases/list")
+      const response = await axios.get("/transfers/bases/list")
       setBases(response.data)
     } catch (error) {
       console.error("Error fetching bases:", error)
@@ -86,7 +86,7 @@ const Transfers = () => {
       params.append("page", pagination.current)
       params.append("limit", pagination.limit)
 
-      const response = await axios.get(`/api/transfers?${params}`)
+      const response = await axios.get(`/transfers?${params}`)
       setTransfers(response.data.transfers)
       setPagination(response.data.pagination)
       setError("")
@@ -100,7 +100,7 @@ const Transfers = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get("/api/transfers/stats/summary")
+      const response = await axios.get("/transfers/stats/summary")
       setStats(response.data)
     } catch (error) {
       console.error("Error fetching stats:", error)
@@ -123,10 +123,10 @@ const Transfers = () => {
     try {
       if (editingTransfer) {
         // Update existing transfer
-        await axios.put(`/api/transfers/${editingTransfer._id}`, formData)
+        await axios.put(`/transfers/${editingTransfer._id}`, formData)
       } else {
         // Create new transfer
-        await axios.post("/api/transfers", formData)
+        await axios.post("/transfers", formData)
       }
 
       setShowForm(false)
@@ -164,7 +164,7 @@ const Transfers = () => {
 
   const handleStatusUpdate = async (transferId, newStatus) => {
     try {
-      await axios.put(`/api/transfers/${transferId}`, { status: newStatus })
+      await axios.put(`/transfers/${transferId}`, { status: newStatus })
       fetchTransfers()
       fetchStats()
     } catch (error) {
@@ -178,7 +178,7 @@ const Transfers = () => {
     }
 
     try {
-      await axios.delete(`/api/transfers/${transferId}`)
+      await axios.delete(`/transfers/${transferId}`)
       fetchTransfers()
       fetchStats()
     } catch (error) {

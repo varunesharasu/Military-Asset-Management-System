@@ -2,6 +2,16 @@ const mongoose = require("mongoose")
 
 const assignmentSchema = new mongoose.Schema(
   {
+    assignmentId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    assetId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Asset",
+      required: true,
+    },
     assetName: {
       type: String,
       required: true,
@@ -15,36 +25,45 @@ const assignmentSchema = new mongoose.Schema(
       required: true,
       min: 1,
     },
-    personnelName: {
+    unit: {
       type: String,
       required: true,
     },
-    personnelRank: {
-      type: String,
-      required: true,
-    },
-    personnelId: {
-      type: String,
-      required: true,
+    assignedTo: {
+      personnelId: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      rank: {
+        type: String,
+        required: true,
+      },
+      unit: {
+        type: String,
+        required: true,
+      },
     },
     base: {
       type: String,
       required: true,
     },
-    assignedDate: {
+    assignmentDate: {
       type: Date,
       required: true,
-      default: Date.now,
     },
     expectedReturnDate: {
       type: Date,
     },
-    returnedDate: {
+    actualReturnDate: {
       type: Date,
     },
     status: {
       type: String,
-      enum: ["active", "returned", "expended", "partial_return"],
+      enum: ["active", "returned", "expended", "lost", "damaged"],
       default: "active",
     },
     assignedBy: {
@@ -59,11 +78,6 @@ const assignmentSchema = new mongoose.Schema(
     notes: {
       type: String,
     },
-    returnedQuantity: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
     expendedQuantity: {
       type: Number,
       default: 0,
@@ -72,12 +86,8 @@ const assignmentSchema = new mongoose.Schema(
     expendedDate: {
       type: Date,
     },
-    updatedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    updatedDate: {
-      type: Date,
+    expendedReason: {
+      type: String,
     },
   },
   {

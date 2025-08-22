@@ -64,7 +64,7 @@ const Purchases = () => {
       params.append("page", pagination.current)
       params.append("limit", pagination.limit)
 
-      const response = await axios.get(`/api/purchases?${params}`)
+      const response = await axios.get(`/purchases?${params}`)
       setPurchases(response.data.purchases)
       setPagination(response.data.pagination)
       setError("")
@@ -78,7 +78,7 @@ const Purchases = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get("/api/purchases/stats/summary")
+      const response = await axios.get("/purchases/stats/summary")
       setStats(response.data)
     } catch (error) {
       console.error("Error fetching stats:", error)
@@ -101,10 +101,10 @@ const Purchases = () => {
     try {
       if (editingPurchase) {
         // Update existing purchase
-        await axios.put(`/api/purchases/${editingPurchase._id}`, formData)
+        await axios.put(`/purchases/${editingPurchase._id}`, formData)
       } else {
         // Create new purchase
-        await axios.post("/api/purchases", formData)
+        await axios.post("/purchases", formData)
       }
 
       setShowForm(false)
@@ -137,7 +137,7 @@ const Purchases = () => {
 
   const handleStatusUpdate = async (purchaseId, newStatus) => {
     try {
-      await axios.put(`/api/purchases/${purchaseId}`, { status: newStatus })
+      await axios.put(`/purchases/${purchaseId}`, { status: newStatus })
       fetchPurchases()
       fetchStats()
     } catch (error) {
@@ -151,7 +151,7 @@ const Purchases = () => {
     }
 
     try {
-      await axios.delete(`/api/purchases/${purchaseId}`)
+      await axios.delete(`/purchases/${purchaseId}`)
       fetchPurchases()
       fetchStats()
     } catch (error) {

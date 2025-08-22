@@ -111,11 +111,9 @@ router.get("/metrics", auth, async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(5)
 
-    const transferFilter = baseFilter.base 
-      ? { $or: [{ fromBase: baseFilter.base }, { toBase: baseFilter.base }] }
-      : {}
-    
-    const recentTransfers = await Transfer.find(transferFilter)
+    const recentTransfers = await Transfer.find({
+      $or: [{ fromBase: baseFilter.base }, { toBase: baseFilter.base }],
+    })
       .populate("initiatedBy", "firstName lastName rank")
       .sort({ createdAt: -1 })
       .limit(5)
