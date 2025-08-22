@@ -496,7 +496,7 @@ const Dashboard = () => {
 
   const fetchBases = async () => {
     try {
-      const response = await axios.get("/dashboard/bases")
+      const response = await axios.get("/api/dashboard/bases")
       setBases(response.data)
       if (response.data.length === 1) {
         setFilters((prev) => ({ ...prev, base: response.data[0] }))
@@ -508,7 +508,7 @@ const Dashboard = () => {
 
   const fetchAssetTypes = async () => {
     try {
-      const response = await axios.get("/dashboard/asset-types")
+      const response = await axios.get("/api/dashboard/asset-types")
       setAssetTypes(response.data)
     } catch (error) {
       console.error("Error fetching asset types:", error)
@@ -524,7 +524,7 @@ const Dashboard = () => {
       if (filters.startDate) params.append("startDate", filters.startDate)
       if (filters.endDate) params.append("endDate", filters.endDate)
 
-      const response = await axios.get(`/dashboard/metrics?${params}`)
+      const response = await axios.get(`/api/dashboard/metrics?${params}`)
       setMetrics(response.data)
       setError("")
     } catch (error) {
@@ -544,7 +544,7 @@ const Dashboard = () => {
       if (filters.startDate) params.append("startDate", filters.startDate)
       if (filters.endDate) params.append("endDate", filters.endDate)
 
-      const response = await axios.get(`/dashboard/movement-details?${params}`)
+      const response = await axios.get(`/api/dashboard/movement-details?${params}`)
       setMovementDetails(response.data)
       setShowMovementDetails(true)
     } catch (error) {

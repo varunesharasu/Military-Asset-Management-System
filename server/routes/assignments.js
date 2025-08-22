@@ -16,9 +16,9 @@ router.get("/", auth, authorize("admin", "base_commander", "logistics_officer"),
 
     // Role-based filtering
     if (req.user.role === "base_commander") {
-      filter.base = req.user.base
+      filter.base = req.user.assignedBase
     } else if (req.user.role === "logistics_officer") {
-      filter.base = req.user.base
+      filter.base = req.user.assignedBase
     }
 
     // Apply additional filters
@@ -62,7 +62,7 @@ router.get("/stats", auth, authorize("admin", "base_commander", "logistics_offic
 
     // Role-based filtering
     if (req.user.role === "base_commander" || req.user.role === "logistics_officer") {
-      matchFilter.base = req.user.base
+      matchFilter.base = req.user.assignedBase
     }
 
     const stats = await Assignment.aggregate([
@@ -140,6 +140,7 @@ router.post("/", auth, authorize("admin", "base_commander"), logTransaction, asy
       purpose,
       expectedReturnDate,
       notes,
+      base,
     } = req.body
 
     // Validation
@@ -147,16 +148,15 @@ router.post("/", auth, authorize("admin", "base_commander"), logTransaction, asy
       return res.status(400).json({ message: "Missing required fields" })
     }
 
+    // Determine the base for the assignment
+    const assignmentBase = req.user.role === "admin" ? (base || req.user.assignedBase) : req.user.assignedBase
     // Check asset availability
     const asset = await Asset.findOne({
-      assetType,
+      type: assetType,
       assetName,
-      base: req.user.role === "admin" ? req.body.base : req.user.base,
+      currentBase: assignmentBase,
     })
 
-    if (!asset || asset.availableQuantity < quantity) {
-      return res.status(400).json({ message: "Insufficient asset quantity available" })
-    }
 
     const assignment = new Assignment({
       assetType,
@@ -168,7 +168,7 @@ router.post("/", auth, authorize("admin", "base_commander"), logTransaction, asy
       purpose,
       expectedReturnDate: expectedReturnDate ? new Date(expectedReturnDate) : null,
       notes,
-      base: req.user.role === "admin" ? req.body.base : req.user.base,
+      base: assignmentBase,
       assignedBy: req.user.id,
       assignedDate: new Date(),
       status: "active",
@@ -184,9 +184,11 @@ router.post("/", auth, authorize("admin", "base_commander"), logTransaction, asy
     await notification.save()
 
     // Update asset availability
-    asset.availableQuantity -= quantity
-    asset.assignedQuantity += quantity
-    await asset.save()
+    if (asset) {
+      asset.availableQuantity -= quantity
+      asset.assignedQuantity += quantity
+      await asset.save()
+    }
 
     res.status(201).json(assignment)
   } catch (error) {
@@ -205,14 +207,14 @@ router.put("/:id/status", auth, authorize("admin", "base_commander"), logTransac
     }
 
     // Role-based access check
-    if (req.user.role === "base_commander" && assignment.base !== req.user.base) {
+    if (req.user.role === "base_commander" && assignment.base !== req.user.assignedBase) {
       return res.status(403).json({ message: "Access denied" })
     }
 
     const asset = await Asset.findOne({
-      assetType: assignment.assetType,
-      assetName: assignment.assetName,
-      base: assignment.base,
+      type: assignment.assetType,
+      name: assignment.assetName,
+      currentBase: assignment.base,
     })
 
     if (status === "returned") {
@@ -269,10 +271,10 @@ router.put("/:id/status", auth, authorize("admin", "base_commander"), logTransac
     await assignment.save()
 
     // Create notification for assignment update
-    if (req.body.status && req.body.status !== assignment.status) {
+    if (status) {
       await Notification.create({
         type: "assignment",
-        message: `Assignment for asset '${assignment.assetName}' status changed to '${req.body.status}'.`,
+        message: `Assignment for asset '${assignment.assetName}' status changed to '${status}'.`,
       })
     }
 
@@ -293,7 +295,7 @@ router.get("/:id", auth, authorize("admin", "base_commander", "logistics_officer
     // Role-based access check
     if (
       (req.user.role === "base_commander" || req.user.role === "logistics_officer") &&
-      assignment.base !== req.user.base
+      assignment.base !== req.user.assignedBase
     ) {
       return res.status(403).json({ message: "Access denied" })
     }
@@ -319,9 +321,9 @@ router.delete("/:id", auth, authorize("admin"), logTransaction, async (req, res)
 
     // Restore asset quantities
     const asset = await Asset.findOne({
-      assetType: assignment.assetType,
-      assetName: assignment.assetName,
-      base: assignment.base,
+      type: assignment.assetType,
+      name: assignment.assetName,
+      currentBase: assignment.base,
     })
 
     if (asset) {

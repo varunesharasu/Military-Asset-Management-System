@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
+import axios from "axios"
 import "../styles/Assignments.css"
 
 const Assignments = () => {
@@ -64,19 +65,15 @@ const Assignments = () => {
         if (value) queryParams.append(key, value)
       })
 
-      const response = await fetch(`/api/assignments?${queryParams}`, {
+      const response = await axios.get(`/api/assignments?${queryParams}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        setAssignments(data.assignments)
-        setPagination(data.pagination)
-      } else {
-        setError("Failed to fetch assignments")
-      }
+      setAssignments(response.data.assignments)
+      setPagination(response.data.pagination)
+      setError("")
     } catch (err) {
       setError("Error fetching assignments")
     } finally {
@@ -86,16 +83,13 @@ const Assignments = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch("/api/assignments/stats", {
+      const response = await axios.get("/api/assignments/stats", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        setStats(data)
-      }
+      setStats(response.data)
     } catch (err) {
       console.error("Error fetching stats:", err)
     }
@@ -104,53 +98,37 @@ const Assignments = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch("/api/assignments", {
-        method: "POST",
+      const response = await axios.post("/api/assignments", formData, {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(formData),
       })
 
-      if (response.ok) {
-        setShowModal(false)
-        resetForm()
-        fetchAssignments()
-        fetchStats()
-      } else {
-        const errorData = await response.json()
-        setError(errorData.message)
-      }
+      setShowModal(false)
+      resetForm()
+      fetchAssignments()
+      fetchStats()
     } catch (err) {
-      setError("Error creating assignment")
+      setError(err.response?.data?.message || "Error creating assignment")
     }
   }
 
   const handleStatusUpdate = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch(`/api/assignments/${selectedAssignment._id}/status`, {
-        method: "PUT",
+      const response = await axios.put(`/api/assignments/${selectedAssignment._id}/status`, statusData, {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(statusData),
       })
 
-      if (response.ok) {
-        setShowStatusModal(false)
-        setSelectedAssignment(null)
-        resetStatusForm()
-        fetchAssignments()
-        fetchStats()
-      } else {
-        const errorData = await response.json()
-        setError(errorData.message)
-      }
+      setShowStatusModal(false)
+      setSelectedAssignment(null)
+      resetStatusForm()
+      fetchAssignments()
+      fetchStats()
     } catch (err) {
-      setError("Error updating assignment status")
+      setError(err.response?.data?.message || "Error updating assignment status")
     }
   }
 
