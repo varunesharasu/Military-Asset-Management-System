@@ -2,6 +2,7 @@ const express = require("express")
 const { body, validationResult } = require("express-validator")
 const { auth, authorize } = require("../middleware/auth")
 const Purchase = require("../models/Purchase")
+const logTransaction = require("../middleware/logger")
 const Balance = require("../models/Balance")
 const Notification = require("../models/Notification")
 
@@ -10,7 +11,7 @@ const router = express.Router()
 // @route   GET /api/purchases
 // @desc    Get all purchases with filters
 // @access  Private (Admin, Logistics Officer)
-router.get("/", auth, authorize("admin", "logistics_officer"), async (req, res) => {
+router.get("/", auth, authorize("admin", "logistics_officer"), logTransaction, async (req, res) => {
   try {
     const { base, assetType, status, startDate, endDate, page = 1, limit = 10 } = req.query
     const { role, assignedBase } = req.user
@@ -98,6 +99,7 @@ router.post(
   [
     auth,
     authorize("admin", "logistics_officer"),
+    logTransaction,
     body("assetType")
       .isIn(["vehicle", "weapon", "ammunition", "equipment", "supplies"])
       .withMessage("Invalid asset type"),
