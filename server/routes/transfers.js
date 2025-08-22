@@ -234,6 +234,7 @@ router.put(
   [
     auth,
     authorize("admin", "base_commander", "logistics_officer"),
+    logTransaction,
     body("assetName").optional().trim().notEmpty(),
     body("assetType").optional().isIn(["vehicle", "weapon", "ammunition", "equipment", "supplies"]),
     body("quantity").optional().isInt({ min: 1 }),
@@ -311,7 +312,7 @@ router.put(
 // @route   DELETE /api/transfers/:id
 // @desc    Delete transfer
 // @access  Private (Admin only)
-router.delete("/:id", auth, authorize("admin"), async (req, res) => {
+router.delete("/:id", auth, authorize("admin"), logTransaction, async (req, res) => {
   try {
     const transfer = await Transfer.findById(req.params.id)
     if (!transfer) {
