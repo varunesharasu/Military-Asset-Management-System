@@ -1,13 +1,14 @@
 const express = require("express")
 const { auth, authorize } = require("../middleware/auth")
 const Assignment = require("../models/Assignment")
+const logTransaction = require("../middleware/logger")
 const Asset = require("../models/Asset")
 const Notification = require("../models/Notification")
 
 const router = express.Router()
 
 // Get all assignments with filtering
-router.get("/", auth, authorize("admin", "base_commander", "logistics_officer"), async (req, res) => {
+router.get("/", auth, authorize("admin", "base_commander", "logistics_officer"), logTransaction, async (req, res) => {
   try {
     const { base, assetType, status, personnelName, dateFrom, dateTo, page = 1, limit = 10 } = req.query
 
@@ -127,7 +128,7 @@ router.get("/stats", auth, authorize("admin", "base_commander", "logistics_offic
 })
 
 // Create new assignment
-router.post("/", auth, authorize("admin", "base_commander"), async (req, res) => {
+router.post("/", auth, authorize("admin", "base_commander"), logTransaction, async (req, res) => {
   try {
     const {
       assetType,
