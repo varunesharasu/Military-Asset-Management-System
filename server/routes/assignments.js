@@ -195,7 +195,7 @@ router.post("/", auth, authorize("admin", "base_commander"), logTransaction, asy
 })
 
 // Update assignment status (return or expend)
-router.put("/:id/status", auth, authorize("admin", "base_commander"), async (req, res) => {
+router.put("/:id/status", auth, authorize("admin", "base_commander"), logTransaction, async (req, res) => {
   try {
     const { status, returnQuantity, expendQuantity, notes } = req.body
 
@@ -305,7 +305,7 @@ router.get("/:id", auth, authorize("admin", "base_commander", "logistics_officer
 })
 
 // Delete assignment (admin only)
-router.delete("/:id", auth, authorize("admin"), async (req, res) => {
+router.delete("/:id", auth, authorize("admin"), logTransaction, async (req, res) => {
   try {
     const assignment = await Assignment.findById(req.params.id)
     if (!assignment) {
