@@ -186,6 +186,7 @@ router.put(
   [
     auth,
     authorize("admin", "logistics_officer"),
+    logTransaction,
     body("assetType").optional().isIn(["vehicle", "weapon", "ammunition", "equipment", "supplies"]),
     body("assetName").optional().trim().notEmpty(),
     body("quantity").optional().isInt({ min: 1 }),
@@ -258,7 +259,7 @@ router.put(
 // @route   DELETE /api/purchases/:id
 // @desc    Delete purchase
 // @access  Private (Admin only)
-router.delete("/:id", auth, authorize("admin"), async (req, res) => {
+router.delete("/:id", auth, authorize("admin"), logTransaction, async (req, res) => {
   try {
     const purchase = await Purchase.findById(req.params.id)
     if (!purchase) {
