@@ -2,6 +2,7 @@ const express = require("express")
 const { body, validationResult } = require("express-validator")
 const { auth, authorize } = require("../middleware/auth")
 const Transfer = require("../models/Transfer")
+const logTransaction = require("../middleware/logger")
 const Asset = require("../models/Asset")
 const Balance = require("../models/Balance")
 const Notification = require("../models/Notification")
@@ -11,7 +12,7 @@ const router = express.Router()
 // @route   GET /api/transfers
 // @desc    Get all transfers with filters
 // @access  Private (Admin, Base Commander, Logistics Officer)
-router.get("/", auth, authorize("admin", "base_commander", "logistics_officer"), async (req, res) => {
+router.get("/", auth, authorize("admin", "base_commander", "logistics_officer"), logTransaction, async (req, res) => {
   try {
     const { base, assetType, status, direction, startDate, endDate, page = 1, limit = 10 } = req.query
     const { role, assignedBase } = req.user
@@ -111,6 +112,7 @@ router.post(
   [
     auth,
     authorize("admin", "base_commander", "logistics_officer"),
+    logTransaction,
     body("assetName").trim().notEmpty().withMessage("Asset name is required"),
     body("assetType")
       .isIn(["vehicle", "weapon", "ammunition", "equipment", "supplies"])
