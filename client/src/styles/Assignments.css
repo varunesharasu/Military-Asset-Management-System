@@ -1234,30 +1234,4 @@
     animation: none;
   }
 }
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .assignments-container {
-    background: var(--background-dark);
-    color: var(--text-light);
-  }
-
-  .detail-label {
-    color: var(--text-secondary-dark);
-  }
-
-  .detail-value {
-    color: var(--text-primary-dark);
-  }
-
-  .btn-secondary {
-    background: var(--background-secondary-dark);
-    color: var(--text-primary-dark);
-    border: 1px solid var(--border-color-dark);
-  }
-
-  .btn-secondary:hover {
-    background: var(--background-tertiary-dark);
-    border-color: var(--primary-color-dark);
-    color: var(--primary-color-dark);
-  }
-}
+    
