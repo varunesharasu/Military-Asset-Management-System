@@ -16,7 +16,6 @@ const Assignments = () => {
   const [showStatusModal, setShowStatusModal] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
 
-  // Filters
   const [filters, setFilters] = useState({
     base: "",
     assetType: "",
