@@ -303,7 +303,6 @@ const Assignments = () => {
         </div>
       </div>
 
-      {/* Enhanced Filters */}
       <div className="filters-section">
         <div className="filters-header">
           <h3>Filter & Search</h3>
