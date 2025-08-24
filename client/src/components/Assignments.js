@@ -209,7 +209,6 @@ const Assignments = () => {
 
   const canManageAssignments = user?.role === "admin" || user?.role === "base_commander"
 
-  // Enhanced refresh function
   const handleRefresh = async () => {
     setRefreshing(true)
     await Promise.all([fetchAssignments(), fetchStats()])
