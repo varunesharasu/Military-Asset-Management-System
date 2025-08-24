@@ -796,7 +796,6 @@ const Assignments = () => {
         </div>
       )}
 
-      {/* Enhanced Status Update Modal */}
       {showStatusModal && selectedAssignment && (
         <div className="modal-overlay" onClick={() => setShowStatusModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
