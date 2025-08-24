@@ -26,7 +26,6 @@ const Assignments = () => {
     page: 1,
   })
 
-  // Form data
   const [formData, setFormData] = useState({
     assetType: "",
     assetName: "",
