@@ -39,7 +39,6 @@ const Assignments = () => {
     base: user?.base || "",
   })
 
-  // Status update data
   const [statusData, setStatusData] = useState({
     status: "",
     returnQuantity: "",
