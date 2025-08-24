@@ -553,7 +553,6 @@ const Assignments = () => {
               </div>
             </div>
 
-            {/* Enhanced Pagination */}
             {pagination.pages > 1 && (
               <div className="pagination">
                 <button
