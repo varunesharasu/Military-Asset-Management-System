@@ -92,7 +92,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-foreground: var(--destructive-foreground); /* This line was already correct. No change needed. */
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -535,5 +535,3 @@ body {
     padding: 0.75rem 0.5rem;
   }
 }
-
-
