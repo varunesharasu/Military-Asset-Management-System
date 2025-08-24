@@ -588,7 +588,6 @@ const Assignments = () => {
         )}
       </div>
 
-      {/* Enhanced Create Assignment Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
