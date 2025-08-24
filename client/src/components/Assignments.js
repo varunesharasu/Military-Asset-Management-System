@@ -258,7 +258,6 @@ const Assignments = () => {
         </div>
       )}
 
-      {/* Enhanced Statistics Cards */}
       <div className="stats-section">
         <div className="stats-header">
           <h3>Assignment Overview</h3>
