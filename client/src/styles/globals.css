@@ -466,6 +466,7 @@ body {
   background-color: var(--muted);
 }
 
+
 /* Status badges */
 .status-badge {
   display: inline-flex;
@@ -534,3 +535,5 @@ body {
     padding: 0.75rem 0.5rem;
   }
 }
+
+
