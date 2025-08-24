@@ -218,7 +218,6 @@ const Assignments = () => {
 
   return (
     <div className="assignments-container">
-      {/* Enhanced Page Header */}
       <div className="page-header">
         <div className="header-content">
           <div className="header-text">
