@@ -420,7 +420,6 @@ const Assignments = () => {
         </div>
       </div>
 
-      {/* Enhanced Assignments Table */}
       <div className="assignments-section">
         <div className="section-header">
           <h3>Assignment Records</h3>
