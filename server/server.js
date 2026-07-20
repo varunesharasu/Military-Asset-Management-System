@@ -24,7 +24,6 @@ mongoose
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.error("MongoDB connection error:", err))
 
-// Basic route
 app.get("/", (req, res) => {
   res.json({ message: "Military Asset Management System API" })
 })
