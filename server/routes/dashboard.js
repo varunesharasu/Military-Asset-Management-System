@@ -30,7 +30,6 @@ router.get("/metrics", auth, async (req, res) => {
       baseFilter.assetType = assetType
     }
 
-    // Add date filter
     const dateFilter = {}
     if (startDate || endDate) {
       dateFilter.date = {}
