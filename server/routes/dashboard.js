@@ -10,7 +10,6 @@ const router = express.Router()
 
 // @route   GET /api/dashboard/metrics
 // @desc    Get dashboard metrics with filters
-// @access  Private
 router.get("/metrics", auth, async (req, res) => {
   try {
     const { base, assetType, startDate, endDate } = req.query
