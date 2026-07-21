@@ -18,7 +18,6 @@ app.use("/api/assignments", require("./routes/assignments"))
 app.use("/api/dashboard", require("./routes/dashboard"))
 app.use("/api/notifications", require("./routes/notifications"));
 
-// Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected successfully"))
