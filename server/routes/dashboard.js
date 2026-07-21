@@ -15,7 +15,6 @@ router.get("/metrics", auth, async (req, res) => {
     const { base, assetType, startDate, endDate } = req.query
     const { role, assignedBase } = req.user
 
-    // Build filter based on user role and permissions
     const baseFilter = {}
     if (role === "admin") {
       // Admin can see all bases
