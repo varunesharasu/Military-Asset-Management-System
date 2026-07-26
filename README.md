@@ -148,10 +148,3 @@ Developed by varunesharasu
 *Add screenshots of dashboard, login, and asset management UI here*
 
 ---
-
----
-
-## Additional Resources
-- [React Documentation](https://reactjs.org/)
-- [Express Documentation](https://expressjs.com/)
-- [MongoDB Documentation](https://www.mongodb.com/docs/)
