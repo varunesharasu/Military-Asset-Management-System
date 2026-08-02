@@ -144,7 +144,3 @@ Developed by varunesharasu
 
 ---
 
-## Screenshots
-*Add screenshots of dashboard, login, and asset management UI here*
-
----
