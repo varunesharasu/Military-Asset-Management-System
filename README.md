@@ -133,12 +133,6 @@ MIT
 
 ---
 
-## Contact & Support
-- Email: support@military.gov
-- Phone: 1-800-MILITARY
-
----
-
 ## Credits
 Developed by varunesharasu
 
