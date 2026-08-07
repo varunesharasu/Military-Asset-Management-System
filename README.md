@@ -128,11 +128,6 @@ Sample credentials:
 
 ---
 
-## License
-MIT
-
----
-
 ## Credits
 Developed by varunesharasu
 
