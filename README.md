@@ -107,8 +107,6 @@ Sample credentials:
    - `cd scripts && node seed-sample-data.js`
 5. **Run the backend**:
    - `cd server && npm start`
-6. **Run the frontend**:
-   - `cd client && npm start`
 
 ---
 
