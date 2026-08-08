@@ -112,8 +112,7 @@ Sample credentials:
 - Access the frontend at [http://localhost:3000](http://localhost:3000)
 - Backend API runs at [http://localhost:5000](http://localhost:5000)
 - Login with sample credentials or register new users (admin only)
-- Explore dashboard, manage assets, view activity, and test notifications
-
+  
 ---
 
 ## Security
