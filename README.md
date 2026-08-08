@@ -103,8 +103,6 @@ Sample credentials:
      JWT_SECRET=your_jwt_secret
      PORT=5000
      ```
-4. **Seed sample data** (optional):
-   - `cd scripts && node seed-sample-data.js`
 
 ---
 
